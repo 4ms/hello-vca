@@ -13,24 +13,25 @@ using mdrivlib::PinDef;
 using mdrivlib::PinMode;
 using mdrivlib::PinNum;
 
+///////////////////////////////////////////////////////////
 // Define leds, buttons, switches, digital jacks, etc here:
 constexpr inline PinDef LevelLED = DevBoard::A1;
+constexpr inline PinDef ModeLED = DevBoard::B4;
 
 constexpr inline PinDef GateInJack = DevBoard::B2;
 
 ///// ADC pins:
 using mdrivlib::AdcChannelConf;
-enum Pots1 : uint32_t { GainCV, GainKnob, /* add more adc names here */ };
-enum Pots2 : uint32_t { /* add more adc names here */ };
-
 constexpr auto AdcSampTime = mdrivlib::AdcSamplingTime::_2Cycles;
 
+enum Pots1 : uint32_t { GainCV, GainKnob, /* add more adc names here */ };
 constexpr auto Adc1Confs = std::to_array({
 	AdcChannelConf{DevBoard::B58, DevBoard::AdcChan::B58, GainKnob, AdcSampTime}, //B58 ADC is only for ADC1
 	AdcChannelConf{DevBoard::B30, DevBoard::AdcChan::B30, GainCV, AdcSampTime},	  //B30 ADC is only for ADC1
 	/* add more ADC channels that have an ADC1 pin here */
 });
 
+enum Pots2 : uint32_t { /* add more adc names here */ };
 constexpr auto Adc2Confs = std::to_array({
 	/* add more ADC channels that have an ADC2 pin here */
 });
@@ -38,7 +39,9 @@ constexpr auto Adc2Confs = std::to_array({
 constexpr int32_t MinPotValue = 72;
 constexpr float MaxPotValue = 4095.f - (float)MinPotValue - 4.f;
 
-//////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
+// ADC config below here can be adjusted after you get everything working:
 ///// ADC
 struct Adc1Conf : mdrivlib::DefaultAdcPeriphConf {
 	static constexpr mdrivlib::AdcResolution resolution = mdrivlib::Bits12;
