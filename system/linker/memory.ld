@@ -1,0 +1,26 @@
+FSBL_           = 0x2FFE0000;
+FSBL_SZ         = 28K;
+FSBL_END_       = 0x2FFE7000;
+
+/* TTB and DMABUF can cover FSBL */
+TTB_			= 0x2FFE0000;
+TTB_SZ_			= 20K;
+TTB_END_		= 0x2FFE5000;
+
+DMABUF_			= 0x2FFE5000;
+DMABUF_SZ_		= 8K;
+DMABUF_END_		= 0x2FFE7000;
+
+A7_CODE_		= 0x2FFE7040;
+A7_CODE_SZ_		= 76K - 0x40;
+A7_CODE_END_	= 0x2FFFA000;
+
+A7_RAM_			= 0x2FFFA000;
+A7_RAM_SZ_		= 24K;
+A7_RAM_END_		= 0x30000000;
+
+/* DMABUF_			= 0x30000000; */
+/* DMABUF_SZ_		= 8K; */
+/* DMABUF_END_		= 0x30002000; */
+
+
