@@ -4,7 +4,7 @@
 #include "params.hh"
 #include "params/leds.hh"
 
-namespace MetaModule
+namespace HelloVCA
 {
 
 struct ParamBlock {
@@ -15,4 +15,4 @@ struct ParamBlock {
 
 using DoubleBufParamBlock = std::array<ParamBlock, 2>;
 
-} // namespace MetaModule
+} // namespace HelloVCA

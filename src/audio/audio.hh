@@ -2,11 +2,10 @@
 #include "conf/board_codec_conf.hh"
 #include "conf/stream_conf.hh"
 #include "controls/controls.hh"
-#include "module/module_player.hh"
+#include "module/module.hh"
 #include "param_block.hh"
-#include "settings_json.hh"
 
-namespace MetaModule
+namespace HelloVCA
 {
 
 using AudioConf = Board::StreamConf::Audio;
@@ -28,9 +27,7 @@ public:
 				UserSettings &settings);
 
 	void start();
-	void start_playing();
 	uint32_t get_audio_errors();
-
 	bool settings_changed();
 
 private:
@@ -39,12 +36,25 @@ private:
 
 	AudioInBlock &audio_in_block;
 	AudioOutBlock &audio_out_block;
+
 	Controls &controls;
-	UserSettings &settings;
 
-	ModulePlayer module;
-
-	// Hardware interface
 	Board::CodecT &codec_;
+
+	// Module
+	Module module;
+
+	// Settings
+	UserSettings &settings;
+	bool should_write_settings = false;
+	unsigned settings_write_ctr = 0;
+
+	// 10 seconds:
+	static constexpr unsigned settings_write_time =
+		10 * Board::StreamConf::Audio::SampleRate / Board::StreamConf::Audio::MaxBlockSize;
+
+	// Audio sr/bz
+	uint32_t sample_rate_;
+	uint32_t block_size_;
 };
-} // namespace MetaModule
+} // namespace HelloVCA

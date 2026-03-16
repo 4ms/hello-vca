@@ -1,4 +1,5 @@
 #pragma once
+#include "conf/analog_pins.hh"
 #include "devboard_mp133_v0.3.hh"
 #include "drivers/adc_builtin_conf.hh"
 #include "drivers/pin.hh"
@@ -24,16 +25,17 @@ constexpr inline PinDef GateInJack = DevBoard::B2;
 using mdrivlib::AdcChannelConf;
 constexpr auto AdcSampTime = mdrivlib::AdcSamplingTime::_2Cycles;
 
-enum Pots1 : uint32_t { GainCV, GainKnob, /* add more adc names here */ };
 constexpr auto Adc1Confs = std::to_array({
-	AdcChannelConf{DevBoard::B58, DevBoard::AdcChan::B58, GainKnob, AdcSampTime}, //B58 ADC is only for ADC1
-	AdcChannelConf{DevBoard::B30, DevBoard::AdcChan::B30, GainCV, AdcSampTime},	  //B30 ADC is only for ADC1
-	/* add more ADC channels that have an ADC1 pin here */
+	AdcChannelConf{DevBoard::B58, DevBoard::AdcChan::B58, HelloVCA::GainKnob, AdcSampTime}, //B58 ADC is only for ADC1
+	AdcChannelConf{DevBoard::B30, DevBoard::AdcChan::B30, HelloVCA::GainCV, AdcSampTime},	//B30 ADC is only for ADC1
+	// add more ADC channels that have an ADC1 pin here
 });
 
-enum Pots2 : uint32_t { /* add more adc names here */ };
 constexpr auto Adc2Confs = std::to_array({
-	/* add more ADC channels that have an ADC2 pin here */
+	AdcChannelConf{}, //dummy placeholder: remove this if using ADC2
+
+	// add more ADC channels that have an ADC2 pin here
+
 });
 
 constexpr int32_t MinPotValue = 72;

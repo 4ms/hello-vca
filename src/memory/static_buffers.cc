@@ -2,7 +2,7 @@
 #include "param_block.hh"
 #include <array>
 
-namespace MetaModule
+namespace HelloVCA
 {
 
 // StaticBuffers sets up our regions of memory that have specific requirements in the target chip architecture.
@@ -41,4 +41,4 @@ void init() {
 
 }; // namespace StaticBuffers
 
-} // namespace MetaModule
+} // namespace HelloVCA

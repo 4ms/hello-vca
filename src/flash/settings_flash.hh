@@ -2,7 +2,7 @@
 #include "console/pr_dbg.hh"
 #include "drivers/qspi_flash_cellblock.hh"
 #include "flash/norflash_layout.hh"
-#include "module/settings_json.hh"
+#include "module/settings.hh"
 #include "util/wear_level.hh"
 
 namespace MetaModule

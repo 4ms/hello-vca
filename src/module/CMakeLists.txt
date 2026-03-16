@@ -4,7 +4,7 @@ project(module)
 add_library(module STATIC)
 
 target_sources(module PRIVATE
-    module_player.cc
+    module.cc
 )
 
 # These are public so Module can be inlined into AudioStream
@@ -22,8 +22,6 @@ target_compile_options(module PRIVATE
 )
 
 target_compile_definitions(module PRIVATE 
-    # PRECALC_FILTER_COEF
-    SAMPLERATE_CONSTANT
 )
 
 set_target_properties(module PROPERTIES CXX_STANDARD 23)

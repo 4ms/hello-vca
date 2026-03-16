@@ -3,8 +3,6 @@
 #include "conf/pin_conf.hh"
 #include "drivers/adc_builtin.hh"
 #include "drivers/debounced_switch.hh"
-#include "drivers/gpio_expander.hh"
-#include "drivers/led_driver_lp5009.hh"
 #include "drivers/pin.hh"
 #include "drivers/pin_change.hh"
 #include "memory/static_buffers.hh"
@@ -15,12 +13,11 @@
 #include "util/interp_param.hh"
 #include <atomic>
 
-namespace MetaModule
+namespace HelloVCA
 {
 
 using mdrivlib::DebouncedButton;
 using mdrivlib::DebouncedPin;
-using mdrivlib::GPIOExpander;
 using mdrivlib::PinMode;
 using mdrivlib::PinPolarity;
 
@@ -72,8 +69,8 @@ private:
 	static constexpr size_t NumAdcs1 = Board::Adc1Confs.size();
 	static constexpr size_t NumAdcs2 = Board::Adc2Confs.size();
 
-	mdrivlib::AdcDmaPeriph<Board::Adc1Conf> adc1_periph{MetaModule::StaticBuffers::adc1_vals, Board::Adc1Confs};
-	mdrivlib::AdcDmaPeriph<Board::Adc2Conf> adc2_periph{MetaModule::StaticBuffers::adc2_vals, Board::Adc2Confs};
+	mdrivlib::AdcDmaPeriph<Board::Adc1Conf> adc1_periph{StaticBuffers::adc1_vals, Board::Adc1Confs};
+	mdrivlib::AdcDmaPeriph<Board::Adc2Conf> adc2_periph{StaticBuffers::adc2_vals, Board::Adc2Confs};
 
 	std::array<HysteresisFilter<4, 4096>, NumAdcs1> adc1_filt;
 	std::array<HysteresisFilter<4, 4096>, NumAdcs2> adc2_filt;
@@ -102,4 +99,4 @@ private:
 	uint32_t sample_rate = Board::StreamConf::Audio::SampleRate;
 };
 
-} // namespace MetaModule
+} // namespace HelloVCA

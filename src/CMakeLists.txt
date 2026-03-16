@@ -47,8 +47,8 @@ add_executable(
   ${FWDIR}/src/core_a7/main.cc
   ${FWDIR}/src/memory/static_buffers.cc
   ${FWDIR}/src/console/uart_log.cc
+
   ${FWDIR}/src/audio/audio.cc
-  ${FWDIR}/src/module/settings_json.cc
   ${FWDIR}/src/controls/controls.cc
   #
   ${FWDIR}/src/flash_loader/flash_loader.cc  # required for read/write flash chip
@@ -97,7 +97,7 @@ target_include_directories(
           ${FWDIR}/lib/mdrivlib
           ${FWDIR}/lib/mdrivlib/target/stm32mp13
           ${LIBDIR}
-          ${FWDIR}/lib/cmsis-device/stm32mp157c/include
+          ${FWDIR}/lib/cmsis-device/stm32mp13x/include
           #
           ${CMAKE_BINARY_DIR}/checkgit
 )

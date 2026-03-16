@@ -4,29 +4,29 @@
 #include "param_block.hh"
 #include <cstring>
 
-namespace MetaModule
+namespace HelloVCA
 {
+
 using namespace mdrivlib;
 
 AudioStream::AudioStream(AudioInBlock &audio_in_block,
 						 AudioOutBlock &audio_out_block,
 						 DoubleBufParamBlock &pblk,
 						 Controls &controls,
-						 json_t &settings)
-
+						 UserSettings &settings)
 	: param_blocks{pblk}
 	, audio_in_block{audio_in_block}
 	, audio_out_block{audio_out_block}
 	, controls{controls}
+	, codec_{Board::Hardware::codec}
 	, settings{settings}
-	, codec_{Board::Hardware::codec} {
-
-	size_t block_size_ = Board::StreamConf::Audio::MaxBlockSize;
+	, sample_rate_{Board::StreamConf::Audio::SampleRate}
+	, block_size_{Board::StreamConf::Audio::MaxBlockSize} {
 
 	if (codec_.init() == Board::CodecT::CODEC_NO_ERR)
 		pr_info("Codec initialized\n");
 	else
-		pr_err("ERROR: No codec detected\n");
+		pr_info("ERROR: No codec detected\n");
 
 	audio_blocks[0].in_codec = {audio_in_block.codec[0].data(), block_size_};
 	audio_blocks[1].in_codec = {std::next(audio_in_block.codec[0].begin(), block_size_), block_size_};
@@ -38,32 +38,49 @@ AudioStream::AudioStream(AudioInBlock &audio_in_block,
 	codec_.set_rx_buffer(audio_blocks[0].in_codec, block_size_);
 
 	auto audio_callback = [this]<unsigned block>() {
-		// Debug::Pin0::high();
-		this->controls.start_param_block<1 - block>();
-		module.process(audio_blocks[block], param_blocks[block]);
-		// Debug::Pin0::low();
+		Debug::Pin0::high();
+
+		// TODO for single-core applications:
+		// Make MetaParams struct have interp params for all pots/cv.
+		// Don't use Params.
+		// Use previous ADC readings to set targets on interp params
+		// Start ADC readings while we process an audio block (it's not circular/continuous -- just make sure it finished before blocksize is done)
+		// Module gets interp params (in param block), not floats per sample
+
+		this->controls.start_param_block<block>();
+
+		module.process(audio_blocks[1 - block], param_blocks[1 - block]);
+
+		// Start/restart countdown if settings changed
+		if (module.did_settings_change()) {
+			settings_write_ctr = settings_write_time;
+		}
+		if (settings_write_ctr > 0) {
+			if (--settings_write_ctr == 0) {
+				should_write_settings = true;
+			}
+		}
+
+		Debug::Pin0::low();
 	};
 
-	codec_.set_callbacks([audio_callback]() { audio_callback.operator()<1>(); },
-						 [audio_callback]() { audio_callback.operator()<0>(); });
+	codec_.set_callbacks([audio_callback]() { audio_callback.operator()<0>(); },
+						 [audio_callback]() { audio_callback.operator()<1>(); });
 }
 
 void AudioStream::start() {
-	module.init(settings);
+	module.load_settings(settings);
 	codec_.start();
 }
 
-// Happens outside audio context:
 bool AudioStream::settings_changed() {
-	if (module.should_write_settings) {
-		module.should_write_settings = false;
-
-		// There's a chance this function gets interrupted and the state is
-		// partially the old and partially the new values.
-		// However, in this module all fields of the state are atomically written, so
-		// it would still be a valid state.
-		module.update_settings(settings);
-
+	// There's a chance this function gets interrupted and the state is
+	// partially the old and partially the new values.
+	// However, in this module all fields of the state are atomically written, so
+	// it would still be a valid state.
+	if (should_write_settings) {
+		should_write_settings = false;
+		module.save_settings(&settings);
 		return true;
 	}
 	return false;
@@ -73,4 +90,4 @@ uint32_t AudioStream::get_audio_errors() {
 	return codec_.get_sai_errors();
 }
 
-} // namespace MetaModule
+} // namespace HelloVCA

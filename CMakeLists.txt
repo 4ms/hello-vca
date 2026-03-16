@@ -4,7 +4,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/ccache.cmake)
 
 set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 
-set(METAMODULE_HEADLESS 1)
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/cmake/arm-none-eabi-gcc.cmake)
 
 project(
   MetaModule
@@ -62,13 +62,11 @@ add_custom_command(
           --a7-lma 0x70080000
           --a7-entry 0x2FFE7040
           --fsbl ${CMAKE_CURRENT_SOURCE_DIR}/bootloader/mp1-boot/build/fsbl.stm32
-          # --ssbl ${CMAKE_CURRENT_SOURCE_DIR}/booloader/audio-boot/build/bootloader.uimg
           --fsbl-lma 0x70000000
           --fsbl-lma2 0x70040000
-          # --ssbl-lma 0x70050000
           ${CMAKE_CURRENT_BINARY_DIR}/prod.uimg
   COMMAND ls -l ${CMAKE_CURRENT_BINARY_DIR}/prod.uimg 
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/main.uimg ${CMAKE_CURRENT_SOURCE_DIR}/bootloader/mp1-boot/build/fsbl.stm32 AlwaysCheckGit
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/main.uimg ${CMAKE_CURRENT_SOURCE_DIR}/bootloader/mp1-boot/build/fsbl.stm32
   COMMENT "Creating combined uimg file"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   VERBATIM USES_TERMINAL
@@ -93,15 +91,20 @@ endif()
 
 add_custom_target(
   bootloader
-  COMMAND make --no-print-directory SERIES=stm32mp13x BOARD_CONF=../board_conf/lc_mp1boot_conf.hh NO_SDMMC=1 NO_DDR=1 ${BOOTLOADER_TOOLCHAIN_OPT}
+  COMMAND make --no-print-directory SERIES=stm32mp13x BOARD_CONF=../board_conf/mp13x-devboard-v0.4.hh ${BOOTLOADER_TOOLCHAIN_OPT}
   COMMENT "Building MP1-Boot (FSBL)"
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bootloader/mp1-boot
   VERBATIM
 )
 
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/bootloader/mp1-boot/build/fsbl.stm32
+  DEPENDS bootloader
+)
+
 add_custom_target(
   norflash-writer
-  COMMAND make --no-print-directory SERIES=stm32mp13x BOARD_CONF=../board_conf/lc_mp1boot_conf.hh NO_DDR=1 NORFLASH_WRITER=1 BINARYNAME=norwriter BUILDDIR=norwriter ${BOOTLOADER_TOOLCHAIN_OPT}
+  COMMAND make --no-print-directory SERIES=stm32mp13x BOARD_CONF=../board_conf/lc_mp1boot_conf.hh  NORFLASH_WRITER=1 BINARYNAME=norwriter BUILDDIR=norwriter ${BOOTLOADER_TOOLCHAIN_OPT}
   COMMENT "Building MP1-Boot (NORFLASH_WRITER)"
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bootloader/mp1-boot
   VERBATIM

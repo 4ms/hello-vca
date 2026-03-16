@@ -4,7 +4,7 @@
 #include "debug.hh"
 #include "util/zip.hh"
 
-namespace MetaModule
+namespace HelloVCA
 {
 
 using namespace mdrivlib;
@@ -31,14 +31,14 @@ void Controls::update_params() {
 	if (num_adc1_updates >= _adcs1[0].get_num_updates()) {
 		for (unsigned i = 0; i < NumAdcs1; i++) {
 			auto val = _adcs1[i].target_val;
-			cur_params->knobs[i] = std::clamp(val, 0.f, 1.f);
+			cur_params->analog_ins[i] = std::clamp(val, 0.f, 1.f);
 
 			_adcs1[i].cur_val = _adcs1[i].target_val;
 		}
 	} else {
 		for (unsigned i = 0; i < NumAdcs1; i++) {
 			auto val = _adcs1[i].next();
-			cur_params->knobs[i] = std::clamp(val, 0.f, 1.f);
+			cur_params->analog_ins[i] = std::clamp(val, 0.f, 1.f);
 		}
 	}
 
@@ -54,14 +54,14 @@ void Controls::update_params() {
 		if (num_adc2_updates >= _adcs2[0].get_num_updates()) {
 			for (unsigned i = 0; i < NumAdcs2; i++) {
 				auto val = _adcs2[i].target_val;
-				cur_params->knobs[i + NumAdcs1] = std::clamp(val, 0.f, 1.f);
+				cur_params->analog_ins[i + NumAdcs1] = std::clamp(val, 0.f, 1.f);
 
 				_adcs1[i].cur_val = _adcs2[i].target_val;
 			}
 		} else {
 			for (unsigned i = 0; i < NumAdcs2; i++) {
 				auto val = _adcs2[i].next();
-				cur_params->knobs[i + NumAdcs1] = std::clamp(val, 0.f, 1.f);
+				cur_params->analog_ins[i + NumAdcs1] = std::clamp(val, 0.f, 1.f);
 			}
 		}
 	}
@@ -158,4 +158,4 @@ float Controls::get_adc2_reading(uint32_t pot_id) {
 	return 0;
 }
 
-} // namespace MetaModule
+} // namespace HelloVCA
