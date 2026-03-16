@@ -5,7 +5,7 @@
 #include "module/settings.hh"
 #include "util/wear_level.hh"
 
-namespace MetaModule
+namespace HelloVCA
 {
 
 class SettingsStorage {
@@ -32,4 +32,4 @@ public:
 			pr_err("Cannot write user settings\n");
 	}
 };
-} // namespace MetaModule
+} // namespace HelloVCA

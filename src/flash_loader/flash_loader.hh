@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <span>
 
-namespace MetaModule
+namespace HelloVCA
 {
 
 class FlashLoader {
@@ -27,4 +27,4 @@ private:
 	mdrivlib::QSpiFlash flash;
 };
 
-} // namespace MetaModule
+} // namespace HelloVCA

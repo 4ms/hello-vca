@@ -1,9 +1,9 @@
 #include "flash_loader.hh"
-#include <span>
 #include "conf/qspi_flash_conf.hh"
 #include "pr_dbg.hh"
+#include <span>
 
-namespace MetaModule
+namespace HelloVCA
 {
 
 FlashLoader::FlashLoader()
@@ -57,4 +57,4 @@ bool FlashLoader::read_sectors(uint32_t base_addr, std::span<uint8_t> buffer) {
 	return flash.read(buffer.data(), base_addr, buffer.size());
 }
 
-} // namespace MetaModule
+} // namespace HelloVCA

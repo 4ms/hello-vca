@@ -75,10 +75,10 @@ void Controls::update_params() {
 		// Set LEDs here
 
 		// Better would be to use PWM or an LED driver so we can show a float value:
-		level_led.set(cur_metaparams->level_led > 0.5f ? 1 : 0);
+		level_led.set_to(cur_leds->level_led > 0.5f ? 1 : 0);
 
 		// This LED is on/off:
-		mode_led.set(cur_metaparams->mode_led);
+		mode_led.set_to(cur_leds->mode_led);
 	}
 
 	cur_params++;

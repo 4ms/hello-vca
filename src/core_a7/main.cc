@@ -17,7 +17,7 @@ struct SystemInit : AppStartup, UartLog, Debug, Board::Hardware {
 } // namespace MetaModule
 
 int main() {
-	using namespace MetaModule;
+	using namespace HelloVCA;
 
 	StaticBuffers::init();
 
