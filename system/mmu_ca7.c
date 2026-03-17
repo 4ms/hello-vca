@@ -113,42 +113,53 @@ void MMU_CreateTranslationTable(void) {
 	section_normal_nc(Sect_Normal_NonCache, region);
 	section_normal_rw_nc(Sect_Normal_RW_NonCache, region);
 
-	// page4k_device_rw(Page_L1_4k, Page_4k_Device_RW, region);
-	page4k_normal(Page_L1_4k, Page_4k_Normal, region);
-	page4k_normal_nc_rw(Page_L1_4k, Page_4k_Normal_NC_RW, region);
+	create_aligned_section(TTB_BASE, A7_CODE, A7_CODE_SZ, Sect_Normal);
+
+	create_aligned_section(TTB_BASE, A7_RAM, A7_RAM_SZ, Sect_Normal_RW);
+
+	create_aligned_section(TTB_BASE, A7_HEAP, A7_HEAP_SZ, Sect_Normal); //Executable!
+
+	//.ddma: non-cacheable
+	// Note: section_so is quite a bit faster than section_normal_nc (sometimes)
+	// But section_normal_* supports unaligned access
+	create_aligned_section(TTB_BASE, DMABUF, DMABUF_SZ, Sect_Normal_NonCache);
 
 	// Peripheral memory
-	// For better security: be more specific and use 4k tables to cover only actual peripherals
-	MMU_TTSection(TTB_BASE, 0x40000000, 0x10000000 / 0x100000, Sect_Device_RW);
-	MMU_TTSection(TTB_BASE, 0x50000000, 0x10000000 / 0x100000, Sect_Device_RW);
+	MMU_TTSection(TTB_BASE, 0x40000000, 0x10000000 / 0x100000, Sect_Device_RW); // can try Sect_StronglyOrdered
+	MMU_TTSection(TTB_BASE, 0x50000000, 0x10000000 / 0x100000, Sect_Device_RW); // can try Sect_StronglyOrdered
 
 	// GIC
 	// Only need: 0xA002 0000 - 0xA002 8000, but set 0xA002 0000 - 0xA0012 0000
 	MMU_TTSection(TTB_BASE, __get_CBAR(), 1, Sect_Device_RW);
 
+	// Alternative is to set up 4k pages as done below:
+	//
+	// page4k_device_rw(Page_L1_4k, Page_4k_Device_RW, region);
+	// page4k_normal(Page_L1_4k, Page_4k_Normal, region);
+	// page4k_normal_nc_rw(Page_L1_4k, Page_4k_Normal_NC_RW, region);
+
 	// Fault 1M region containing SYSRAM (0x2FF00000 - 0x30000000):
-	MMU_TTPage4k(TTB_BASE, 0x2FF00000, 256, Page_L1_4k, (uint32_t *)sysram_table_l2_base_4k, DESCRIPTOR_FAULT);
+	// MMU_TTPage4k(TTB_BASE, 0x2FF00000, 256, Page_L1_4k, (uint32_t *)sysram_table_l2_base_4k, DESCRIPTOR_FAULT);
 
-	// DMABUF: 0x2FFE5000 + 2 pages = '7000
-	MMU_TTPage4k(
-		TTB_BASE, DMABUF, DMABUF_SZ / 4096, Page_L1_4k, (uint32_t *)sysram_table_l2_base_4k, Page_4k_Normal_NC_RW);
+	// DMABUF:
+	// MMU_TTPage4k(TTB_BASE, DMABUF, DMABUF_SZ / 4096, Page_L1_4k, (uint32_t *)sysram_table_l2_base_4k, Page_4k_Normal_NC_RW);
 
-	// A7 CODE: 0x2FFE7000 + 19 pages => 2FFFA000
-	MMU_TTPage4k(TTB_BASE,
-				 A7_CODE - 0x40,
-				 (A7_CODE_SZ + 0x40) / 4096,
-				 Page_L1_4k,
-				 (uint32_t *)sysram_table_l2_base_4k,
-				 Page_4k_Normal);
+	// A7 CODE:
+	// MMU_TTPage4k(TTB_BASE,
+	// 			 A7_CODE - 0x40,
+	// 			 (A7_CODE_SZ + 0x40) / 4096,
+	// 			 Page_L1_4k,
+	// 			 (uint32_t *)sysram_table_l2_base_4k,
+	// 			 Page_4k_Normal);
 
-	// A7 RAM: 0x2FFFA000 + 6 pages => 0x30000000
-	MMU_TTPage4k(TTB_BASE, A7_RAM, A7_RAM_SZ / 4096, Page_L1_4k, (uint32_t *)sysram_table_l2_base_4k, Page_4k_Normal);
+	// A7 RAM:
+	// MMU_TTPage4k(TTB_BASE, A7_RAM, A7_RAM_SZ / 4096, Page_L1_4k, (uint32_t *)sysram_table_l2_base_4k, Page_4k_Normal);
 
 	// Fault 1M region containing SRAM (0x30000000 - 0x30100000):
-	MMU_TTPage4k(TTB_BASE, 0x30000000, 256, Page_L1_4k, (uint32_t *)sram_table_l2_base_4k, DESCRIPTOR_FAULT);
+	// MMU_TTPage4k(TTB_BASE, 0x30000000, 256, Page_L1_4k, (uint32_t *)sram_table_l2_base_4k, DESCRIPTOR_FAULT);
 
-	// SRAM(not used): 0x30000000. Make it Normal(?)
-	MMU_TTPage4k(TTB_BASE, 0x30000000, (0x8000) / 4096, Page_L1_4k, (uint32_t *)sram_table_l2_base_4k, Page_4k_Normal);
+	// SRAM: 0x30000000. Make it Normal(?)
+	// MMU_TTPage4k(TTB_BASE, 0x30000000, (0x8000) / 4096, Page_L1_4k, (uint32_t *)sram_table_l2_base_4k, Page_4k_Normal);
 
 	/* Set location of level 1 page table
 	; 31:14 - Translation table base addr (31:14-TTBCR.N, TTBCR.N is 0 out of reset)

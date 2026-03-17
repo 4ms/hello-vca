@@ -6,6 +6,13 @@ set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/cmake/arm-none-eabi-gcc.cmake)
 
+#TODO: select:
+# - MP13x which forces SINGLE_CORE
+# - MP15x in MULTI_CORE mode (M4 does controls, A7 does audio)
+# - MP15x in SINGLE_CORE
+
+set(SINGLE_CORE ON)
+
 project(
   MetaModule
   VERSION 0.10
@@ -43,7 +50,7 @@ add_custom_command(
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/main.uimg
   COMMAND flashing/elf_to_uimg.py
-          -v
+          # -v  #Uncomment this to have verbose output
           --a7 $<TARGET_FILE:main.elf>
           ${CMAKE_CURRENT_BINARY_DIR}/main.uimg
   COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/main.uimg ${CMAKE_CURRENT_BINARY_DIR}/main-uimg.bin #Jlink and Ozone require .bin extension
@@ -60,7 +67,7 @@ add_custom_command(
           -v
           --a7 ${CMAKE_CURRENT_BINARY_DIR}/main.uimg
           --a7-lma 0x70080000
-          --a7-entry 0x2FFE7040
+          --a7-entry 0xC0100040
           --fsbl ${CMAKE_CURRENT_SOURCE_DIR}/bootloader/mp1-boot/build/fsbl.stm32
           --fsbl-lma 0x70000000
           --fsbl-lma2 0x70040000

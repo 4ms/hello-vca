@@ -10,14 +10,21 @@ namespace HelloVCA
 namespace StaticBuffers
 {
 
-//If DMA Burst mode is enabled, See RM sec 18.3.12;
-//The burst configuration has to be selected in order to respect the AHB protocol, where bursts must not cross the 1 Kbyte address boundary because the minimum address space that can be allocated to a single slave is 1 Kbyte. This means that the 1-Kbyte address boundary must not be crossed by a burst block transfer, otherwise an AHB error is generated, that is not reported by the DMA registers.
-
+// These must be noncache-able because they are used by the SAI audio DMA:
 __attribute__((section(".noncachable"))) Board::StreamConf::Audio::AudioInBlock audio_in_dma_block{};
 __attribute__((section(".noncachable"))) Board::StreamConf::Audio::AudioOutBlock audio_out_dma_block{};
-__attribute__((section(".noncachable"))) DoubleBufParamBlock param_blocks{};
+
+// These must be noncache-able because they are used by the ADC DMA:
 alignas(16) __attribute__((section(".noncachable"))) std::array<uint16_t, Board::Adc1Confs.size()> adc1_vals{};
 alignas(16) __attribute__((section(".noncachable"))) std::array<uint16_t, Board::Adc2Confs.size()> adc2_vals{};
+
+#ifdef SINGLE_CORE
+// No need to be non-cacheable for single core
+DoubleBufParamBlock param_blocks{};
+#else
+// This is used by both M4 and A7 cores, so needs to be non-cacheable
+__attribute__((section(".noncachable"))) DoubleBufParamBlock param_blocks{};
+#endif
 
 void init() {
 	for (auto &block : param_blocks) {

@@ -9,8 +9,8 @@ MEMORY
 {
     CODE (rx)			: ORIGIN = A7_CODE_,		LENGTH = A7_CODE_SZ_
     RAM (rx)			: ORIGIN = A7_RAM_,			LENGTH = A7_RAM_SZ_
+	HEAP (rw)			: ORIGIN = A7_HEAP_,		LENGTH = A7_HEAP_SZ_
 	DMABUF (rw)			: ORIGIN = DMABUF_,			LENGTH = DMABUF_SZ_ 
-
 }
 
 /* A7 stacks are at end of RAM */
@@ -41,6 +41,7 @@ SECTIONS
         __RO_START__ = .;
 		*(.rodata)         /* .rodata sections (constants, strings, etc.) */
 		*(.rodata*)
+		*(.binary*)
 		/*. = ALIGN(4096);*/
         __RO_END__ = .;
 	} > CODE
@@ -98,19 +99,25 @@ SECTIONS
 		_ram_aligned_end = .;
     } > RAM
 
-	.ddma (NOLOAD):
+	.heap (NOLOAD):
 	{
 		. = ALIGN(8);
-        *(.ddma)
-		*(.sysram)
-		*(.noncachable)
+		_sheap = .;
+		. += A7_HEAP_SZ_;
+		_eheap = .;
+	} > HEAP
+
+	.noncachable (NOLOAD):
+	{
+		. = ALIGN(8);
+        *(.noncachable)
 	} > DMABUF
 
     _user_stack_start = _ram_aligned_end;
-    _user_stack_end = _user_stack_start + 0x1400;  /* 4k is not enough, 5k is OK */
+    _user_stack_end = _user_stack_start + 0x10000;  /* 64kB */
 
     _svc_stack_start = _user_stack_end;
-    _svc_stack_end = _svc_stack_start + 0x8;
+    _svc_stack_end = _svc_stack_start + 0x8; 
 
     _irq_stack_start = _svc_stack_end;
     _irq_stack_end = _irq_stack_start + 0x8; 
