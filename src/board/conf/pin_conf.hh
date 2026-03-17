@@ -1,6 +1,6 @@
 #pragma once
-#include "conf/analog_pins.hh"
-#include "devboard_mp133_v0.3.hh"
+#include "analog_pins.hh"
+#include "devboard.hh"
 #include "drivers/adc_builtin_conf.hh"
 #include "drivers/pin.hh"
 #include <array>

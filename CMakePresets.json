@@ -10,8 +10,8 @@
       "name": "base",
       "description": "Common settings for all projects",
       "generator": "Ninja",
-      "binaryDir": "build",
-      "hidden": false,
+      "binaryDir": "build/${presetName}",
+      "hidden": true,
       "cacheVariables": {
         "TOOLCHAIN_BASE_DIR":{
           "type": "FILEPATH",
@@ -20,25 +20,52 @@
         "CMAKE_TOOLCHAIN_FILE": {
           "type": "STRING",
           "value": "cmake/arm-none-eabi-gcc.cmake"
-        }
+        },
+        "LOG_LEVEL": { "type": "STRING", "value": "DEBUG" }
+      }
+    },
+    {
+      "name": "mp13x",
+      "description": "STM32MP13x (single-core)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CHIP": { "type": "STRING", "value": "MP13x" }
+      }
+    },
+    {
+      "name": "mp15x-singlecore",
+      "description": "STM32MP15x single-core (A7 only)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CHIP": { "type": "STRING", "value": "MP15x-SINGLECORE" }
+      }
+    },
+    {
+      "name": "mp15x-dualcore",
+      "description": "STM32MP15x dual-core (A7 + M4)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CHIP": { "type": "STRING", "value": "MP15x-DUALCORE" }
       }
     },
     {
       "name": "full",
-      "inherits": "base"
-    },
-    {
-      "name": "uart-log",
-      "inherits": "full",
-      "cacheVariables": {
-        "LOG_LEVEL": { "type": "STRING", "value": "DEBUG" }
-      }
+      "inherits": "mp13x",
+      "binaryDir": "build"
     }
   ],
   "buildPresets": [
     {
-      "name": "base",
-      "configurePreset": "base"
+      "name": "mp13x",
+      "configurePreset": "mp13x"
+    },
+    {
+      "name": "mp15x-singlecore",
+      "configurePreset": "mp15x-singlecore"
+    },
+    {
+      "name": "mp15x-dualcore",
+      "configurePreset": "mp15x-dualcore"
     },
     {
       "name": "full",

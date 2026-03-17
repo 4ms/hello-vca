@@ -44,7 +44,11 @@
 // Descriptors should place all memory in domain 0
 
 #include "ld.h"
+#if defined(STM32MP13x)
 #include "stm32mp13xx.h"
+#else
+#include "stm32mp1xx.h"
+#endif
 
 // TTB base address
 #define __TTB_BASE TTB

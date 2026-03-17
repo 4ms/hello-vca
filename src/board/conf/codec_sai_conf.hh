@@ -1,6 +1,6 @@
 #pragma once
 #include "conf/stream_conf.hh"
-#include "devboard_mp133_v0.3.hh"
+#include "devboard.hh"
 #include "drivers/pin.hh"
 #include "drivers/sai_config_struct.hh"
 

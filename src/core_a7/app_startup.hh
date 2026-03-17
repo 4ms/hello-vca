@@ -3,11 +3,14 @@
 #include "drivers/rcc.hh"
 #include "drivers/stm32xx.h"
 #include "drivers/system_clocks.hh"
+#if defined(STM32MP13)
 #include "stm32mp13xx_ll_etzpc.h"
+#endif
 
 namespace MetaModule
 {
 
+#if defined(STM32MP13)
 static uint32_t GetPLL1PClockFreq(void) {
 	uint32_t pllsource, pll1m, pll1fracen, pll1p_freq;
 	float fracn1, pll1vco;
@@ -41,11 +44,13 @@ static uint32_t GetPLL1PClockFreq(void) {
 	}
 	return pll1p_freq;
 }
+#endif
 
 struct AppStartup {
 	AppStartup() {
 		using namespace mdrivlib;
 
+#if defined(STM32MP13)
 		SystemClocks::init_clocks(rcc_osc_conf, rcc_clk_conf, rcc_periph_clk_conf);
 
 		SystemCoreClock = GetPLL1PClockFreq();
@@ -59,6 +64,32 @@ struct AppStartup {
 		L1C_CleanDCacheAll();
 		__DSB();
 		__ISB();
+#else
+#if defined(DUAL_CORE)
+		RCC_Enable::HSEM_::set();
+
+		HWSemaphore<MainCoreReady>::disable_channel_ISR();
+		HWSemaphore<MainCoreReady>::lock();
+
+		Copro::reset();
+
+		SystemClocks::init_clocks(rcc_osc_conf, rcc_clk_conf, rcc_periph_clk_conf);
+
+		SecondaryCore::start();
+
+		L1C_CleanDCacheAll();
+		__DSB();
+		__ISB();
+
+		Copro::start();
+#else
+		SystemClocks::init_clocks(rcc_osc_conf, rcc_clk_conf, rcc_periph_clk_conf);
+		L1C_CleanDCacheAll();
+		__DSB();
+		__ISB();
+#endif
+#endif
+
 	}
 };
 

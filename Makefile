@@ -11,7 +11,7 @@ all:
 	cmake --build --preset ${PRESET} 
 
 configure:
-	cmake --fresh --preset ${PRESET} -G ${GEN} -DLOG_LEVEL=DEBUG
+	cmake --fresh --preset ${PRESET} -G ${GEN}
 
 
 flash-norwriter: 
