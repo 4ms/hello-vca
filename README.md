@@ -1,4 +1,4 @@
-## Levelling EQ Amplifier Firmware
+## Hello VCA
 
 Requirements: 
 
