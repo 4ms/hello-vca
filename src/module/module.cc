@@ -1,8 +1,7 @@
 #include "module.hh"
 #include "conf/analog_pins.hh"
+#include "math.hh"
 #include <utility>
-
-// #include "math.hh"
 
 namespace HelloVCA
 {
@@ -35,9 +34,7 @@ void Module::process(Board::StreamConf::Audio::CombinedAudioBlock &audio_block, 
 		float gain = params.analog_ins[GainKnob] + offset;
 
 		if (expo_mode) {
-			gain *= 0.5f;
-			gain = gain * gain * gain * gain;
-			gain *= 2.f;
+			gain = Expf(gain);
 		}
 
 		float left_output = left_input * gain;
