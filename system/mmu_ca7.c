@@ -73,10 +73,10 @@ static uint32_t Sect_Normal_RW_NonCache;
 volatile uint32_t sysram_table_l2_base_4k = (uint32_t)__TTB_BASE + TTB_L1_SIZE;
 volatile uint32_t sram_table_l2_base_4k = (uint32_t)__TTB_BASE + TTB_L1_SIZE + TTB_L2_SIZE;
 
-static uint32_t Page_L1_4k = 0x0; // generic
+// static uint32_t Page_L1_4k = 0x0; // generic
 // static uint32_t Page_4k_Device_RW;	  // Shared device, not executable, rw, domain 0
-static uint32_t Page_4k_Normal;		  // Normal executable rw
-static uint32_t Page_4k_Normal_NC_RW; //Normal non-executable, non-cacheable, rw
+// static uint32_t Page_4k_Normal;		  // Normal executable rw
+// static uint32_t Page_4k_Normal_NC_RW; //Normal non-executable, non-cacheable, rw
 
 uint32_t align_down_1M(uint32_t addr) {
 	return addr & ~(OFFSET_1M - 1);
