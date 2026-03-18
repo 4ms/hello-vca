@@ -9,12 +9,12 @@ struct Debug {
 		}
 	};
 
-	using Pin0 = mdrivlib::FPin<mdrivlib::GPIO::D, 7, mdrivlib::PinMode::Output>; //Third pin
-	using Pin1 = mdrivlib::FPin<mdrivlib::GPIO::E, 5, mdrivlib::PinMode::Output>; //Fourth pin
-	using Pin2 = mdrivlib::FPin<mdrivlib::GPIO::D, 0, mdrivlib::PinMode::Output>; // Uart RX
+	using Pin0 = mdrivlib::FPin<mdrivlib::GPIO::D, 7, mdrivlib::PinMode::Output>;  //Third pin
+	using Pin1 = mdrivlib::FPin<mdrivlib::GPIO::E, 5, mdrivlib::PinMode::Output>;  //Fourth pin
+	using Pin2 = mdrivlib::FPin<mdrivlib::GPIO::D, 0, mdrivlib::PinMode::Output>;  // Uart RX
+	using Pin3 = mdrivlib::FPin<mdrivlib::GPIO::B, 14, mdrivlib::PinMode::Output>; // enabled by JP2
+	using Pin4 = mdrivlib::FPin<mdrivlib::GPIO::B, 15, mdrivlib::PinMode::Output>; // enabled by JP3
 
-	using Pin3 = NoPin;
-	using Pin4 = NoPin;
 	using Pin5 = NoPin;
 	using Pin6 = NoPin;
 	using Pin7 = NoPin;
