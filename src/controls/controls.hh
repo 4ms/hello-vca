@@ -1,4 +1,5 @@
 #pragma once
+#include "conf/adc_periph_conf.hh"
 #include "conf/control_conf.hh"
 #include "conf/pin_conf.hh"
 #include "drivers/adc_builtin.hh"
@@ -11,7 +12,6 @@
 #include "params/params.hh"
 #include "util/filter.hh"
 #include "util/filtered_interp_array.hh"
-#include <atomic>
 
 namespace HelloVCA
 {
