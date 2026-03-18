@@ -7,6 +7,3 @@
 [submodule "bootloader/mp1-boot"]
 	path = bootloader/mp1-boot
 	url = https://github.com/4ms/mp1-boot.git
-[submodule "lib/stm_audio_bootloader"]
-	path = lib/stm_audio_bootloader
-	url = https://github.com/4ms/stm-audio-bootloader
