@@ -129,7 +129,7 @@ You can toggle some GPIO pins to indicate states from firmware with minimal
 impact on firmware timing. Typically you would read the pins using an
 oscilloscope or logic probe.
 
-There are three header pins on the PCB dedicated to this.
+There are several header pins on the PCB dedicated to this.
 
 ```
    Debug::Pin0------|   |------- UART RX (from computer to board)
@@ -143,9 +143,11 @@ There are three header pins on the PCB dedicated to this.
 ================================================================== <<< PCB
 ```
 
-To use Debug::Pin1 you obviously have to remove the Freeze Jumper, so remember to re-install it before rebooting.
+To use Debug::Pin1 you obviously have to remove the Freeze Jumper, so remember
+to re-install it before rebooting.
 
-To use Debug::Pin2, you have to put a call to `Debug::Pin2::init()` somewhere after the UART is initialized.
+To use Debug::Pin2, you have to put a call to `Debug::Pin2::init()` somewhere
+after the UART is initialized.
 
 *Note: The two floating pins can be set to GND or to Debug::Pin3/Pin4, by
 blobbing solder jumper JP2 and/or JP3 on the reverse side of the header. Take

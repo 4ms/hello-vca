@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.24)
 
 set(USE_CCACHE AUTO CACHE STRING "Use ccache to speed up builds")
 set_property(CACHE USE_CCACHE PROPERTY STRINGS "AUTO;ON;OFF")
