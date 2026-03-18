@@ -12,7 +12,7 @@ FROM debian:bookworm-slim
 LABEL org.opencontainers.image.source=https://github.com/4ms/hello-vca
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
     git cmake ninja-build build-essential python3 wget file xxd tar xz-utils \
-    ca-certificates flatbuffers-compiler libflatbuffers-dev \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 ARG ARM_TOOLCHAIN_VERSION=14.2.rel1
 RUN ARCH=$(uname -m) && \
@@ -27,16 +27,14 @@ RUN ARCH=$(uname -m) && \
     tar -xf /tmp/arm-toolchain.tar.xz -C /opt/arm-toolchain --strip-components=1 && \
     rm /tmp/arm-toolchain.tar.xz
 ENV PATH="/opt/arm-toolchain/bin:${PATH}"
-ENV TOOLCHAIN_BASE_DIR="/opt/arm-toolchain"
+ENV TOOLCHAIN_BASE_DIR="/opt/arm-toolchain/bin/"
 WORKDIR /workspace
 CMD ["/bin/bash", "-c", "set -e; \
 if [ ! -d /workspace/hello-vca ]; then exit 1; fi; \
 cd /workspace/hello-vca; \
-sed -i '73 s/^/#/' cmake/CheckGit.cmake 2>/dev/null || true; \
+git config --global --add safe.directory /workspace/hello-vca; \
 if [ ! -f build/build.ninja ]; then \
     rm -rf build; \
-    cmake -S . -B build -GNinja \
-        -DCMAKE_TOOLCHAIN_FILE=cmake/arm-none-eabi-gcc.cmake \
-        -DLOG_LEVEL=DEBUG; \
+    cmake --fresh --preset full; \
 fi; \
-cmake --build build"]
+cmake --build --preset full"]
