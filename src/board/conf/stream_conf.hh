@@ -8,13 +8,10 @@ namespace Board
 
 struct StreamConfSingleCodecStereo {
 	struct Audio {
-		static constexpr int SampleRate = 96000;
+		static constexpr int SampleRate = 48000;
 
 		// BlockSize: Number of Frames processed each time AudioStream::process() is called
-		static constexpr int MaxBlockSize = 8; //96k 8block: 500us delay
-		// static constexpr int MaxBlockSize = 16; //96k 16block: 750us delay
-		// static constexpr int MaxBlockSize = 32; //96k 32:
-		// static constexpr int MaxBlockSize = 64; //96k 64:
+		static constexpr int MaxBlockSize = 64;
 
 		static constexpr int NumDMAHalfTransfers = 2;
 

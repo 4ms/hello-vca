@@ -10,9 +10,9 @@ using mdrivlib::PinNum;
 
 // Used for LED driver (LP5009), and codec
 const mdrivlib::I2CConfig a7m4_shared_i2c_conf = {
-	.I2Cx = I2C1,
-	.SCL = {GPIO::D, PinNum::_12, PinAF::AltFunc5},
-	.SDA = {GPIO::E, PinNum::_8, PinAF::AltFunc5},
+	.I2Cx = I2C6,
+	.SCL = {GPIO::A, PinNum::_11, PinAF::AltFunc2},
+	.SDA = {GPIO::A, PinNum::_12, PinAF::AltFunc2},
 	.timing =
 		{
 			.PRESC = 0x40,

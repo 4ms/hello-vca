@@ -8,10 +8,10 @@ using mdrivlib::PinNum;
 constexpr mdrivlib::QSPIFlashConfig qspi_patchflash_conf = {
 	.io0 = {GPIO::F, PinNum::_8, PinAF::AltFunc10},
 	.io1 = {GPIO::F, PinNum::_9, PinAF::AltFunc10},
-	.io2 = {GPIO::F, PinNum::_6, PinAF::AltFunc9},
-	.io3 = {GPIO::H, PinNum::_7, PinAF::AltFunc13},
+	.io2 = {GPIO::F, PinNum::_7, PinAF::AltFunc9},
+	.io3 = {GPIO::F, PinNum::_6, PinAF::AltFunc9},
 	.clk = {GPIO::F, PinNum::_10, PinAF::AltFunc9},
-	.cs = {GPIO::B, PinNum::_2, PinAF::AltFunc9},
+	.cs = {GPIO::B, PinNum::_6, PinAF::AltFunc10},
 
 	/* QSPI freq = QUADSPICLK /(1 + ClockPrescaler) = 266 MHz/(2+1) = 88 Mhz */
 	.clock_division = 3,

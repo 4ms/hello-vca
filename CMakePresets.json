@@ -25,48 +25,12 @@
       }
     },
     {
-      "name": "mp13x",
-      "description": "STM32MP13x (single-core)",
-      "inherits": "base",
-      "cacheVariables": {
-        "CHIP": { "type": "STRING", "value": "MP13x" }
-      }
-    },
-    {
-      "name": "mp15x-singlecore",
-      "description": "STM32MP15x single-core (A7 only)",
-      "inherits": "base",
-      "cacheVariables": {
-        "CHIP": { "type": "STRING", "value": "MP15x-SINGLECORE" }
-      }
-    },
-    {
-      "name": "mp15x-dualcore",
-      "description": "STM32MP15x dual-core (A7 + M4)",
-      "inherits": "base",
-      "cacheVariables": {
-        "CHIP": { "type": "STRING", "value": "MP15x-DUALCORE" }
-      }
-    },
-    {
       "name": "full",
-      "inherits": "mp13x",
+      "inherits": "base",
       "binaryDir": "build"
     }
   ],
   "buildPresets": [
-    {
-      "name": "mp13x",
-      "configurePreset": "mp13x"
-    },
-    {
-      "name": "mp15x-singlecore",
-      "configurePreset": "mp15x-singlecore"
-    },
-    {
-      "name": "mp15x-dualcore",
-      "configurePreset": "mp15x-dualcore"
-    },
     {
       "name": "full",
       "configurePreset": "full"

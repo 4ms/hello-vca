@@ -2,7 +2,6 @@
 #include "console/pr_dbg.hh"
 #include "debug.hh"
 #include "param_block.hh"
-#include <cstring>
 
 namespace HelloVCA
 {
