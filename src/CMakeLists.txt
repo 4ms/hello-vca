@@ -1,28 +1,10 @@
 include(${CMAKE_SOURCE_DIR}/cmake/common.cmake)
 
-
 set(FWDIR ${CMAKE_SOURCE_DIR})
 set(LIBDIR ${FWDIR}/lib)
 
-if (STM32MP13x)
-  include(${CMAKE_SOURCE_DIR}/cmake/arch_mp13x.cmake)
-  set(HAL_PREFIX stm32mp13/src/stm32mp13xx)
-  set(MDRIVLIB_TARGET1 stm32mp13)
-  set(MDRIVLIB_TARGET stm32mp13)
-  set(QSPI_DRIVER ${FWDIR}/lib/mdrivlib/target/stm32mp13/drivers/xspi_flash_driver.cc
-                  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_hal_xspi.c
-  )
-  set(LINK_SCRIPT stm32mp13x.ld)
-elseif (STM32MP15x)
-  include(${CMAKE_SOURCE_DIR}/cmake/arch_mp15xa7.cmake)
-  set(HAL_PREFIX stm32mp15/src/stm32mp1xx)
-  set(MDRIVLIB_TARGET1 stm32mp1)
-  set(MDRIVLIB_TARGET stm32mp1_ca7)
-  set(QSPI_DRIVER ${FWDIR}/lib/mdrivlib/drivers/qspi_flash_driver.cc
-                  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_hal_qspi.c
-  )
-  set(LINK_SCRIPT stm32mp15xx_ca7.ld)
-endif()
+include(${CMAKE_SOURCE_DIR}/cmake/arch_mp15xa7.cmake)
+
 
 include(${CMAKE_SOURCE_DIR}/cmake/log_levels.cmake)
 enable_logging()
@@ -36,13 +18,12 @@ add_library(mdrivlib_interface INTERFACE)
 target_include_directories(
   mdrivlib_interface
   INTERFACE 
-            # ${FWDIR}/lib/cmsis-device/stm32mp13x/include
             ${FWDIR}/lib/cmsis/Core_A/Include
             ${FWDIR}/lib/cmsis/Include
             ${FWDIR}/lib/mdrivlib
 
-            ${FWDIR}/lib/mdrivlib/target/${MDRIVLIB_TARGET1}
-            # ${FWDIR}/lib/stm32-hal/stm32mp13/include
+            ${FWDIR}/lib/mdrivlib/target/stm32mp1
+            ${FWDIR}/lib/mdrivlib/target/stm32mp1_ca7
             ${FWDIR}/lib/stm32-hal/stm32mp15/include
 
             ${FWDIR}/src/core_a7
@@ -77,20 +58,21 @@ add_executable(
   #
   ${FWDIR}/src/flash/flash_loader.cc
   #
-  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_hal.c
-  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_hal_adc.c
-  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_hal_adc_ex.c
-  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_hal_rcc.c
-  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_hal_rcc_ex.c
-  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_hal_mdma.c
-  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_hal_uart.c
-  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_hal_uart_ex.c
-  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_hal_dma.c
-  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_hal_i2c.c
-  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_hal_i2c_ex.c
-  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_hal_sai.c
-  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_ll_tim.c
-  ${FWDIR}/lib/stm32-hal/${HAL_PREFIX}_ll_rcc.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_hal.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_hal_adc.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_hal_adc_ex.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_hal_rcc.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_hal_rcc_ex.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_hal_mdma.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_hal_uart.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_hal_uart_ex.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_hal_dma.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_hal_i2c.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_hal_i2c_ex.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_hal_sai.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_hal_qspi.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_ll_tim.c
+  ${FWDIR}/lib/stm32-hal/stm32mp15/src/stm32mp1xx_ll_rcc.c
   #
   ${FWDIR}/lib/mdrivlib/drivers/pin.cc
   ${FWDIR}/lib/mdrivlib/drivers/tim.cc
@@ -98,12 +80,13 @@ add_executable(
   ${FWDIR}/lib/mdrivlib/drivers/i2c.cc
   ${FWDIR}/lib/mdrivlib/drivers/codec_PCM3060.cc
 
-  ${FWDIR}/lib/mdrivlib/target/${MDRIVLIB_TARGET1}/drivers/sai_tdm.cc
-  ${FWDIR}/lib/mdrivlib/target/${MDRIVLIB_TARGET}/boot/system_ca7.c
-  ${FWDIR}/lib/mdrivlib/target/${MDRIVLIB_TARGET}/boot/irq_ctrl.c
-  ${FWDIR}/lib/mdrivlib/target/${MDRIVLIB_TARGET}/drivers/interrupt_handler.cc
-  ${FWDIR}/lib/mdrivlib/target/${MDRIVLIB_TARGET}/drivers/hal_handlers.cc
-  ${FWDIR}/lib/mdrivlib/target/${MDRIVLIB_TARGET}/drivers/cycle_counter.cc
+  ${FWDIR}/lib/mdrivlib/target/stm32mp1/drivers/sai_tdm.cc
+  ${FWDIR}/lib/mdrivlib/target/stm32mp1_ca7/boot/system_ca7.c
+  ${FWDIR}/lib/mdrivlib/target/stm32mp1_ca7/boot/irq_ctrl.c
+  ${FWDIR}/lib/mdrivlib/target/stm32mp1_ca7/drivers/interrupt_handler.cc
+  ${FWDIR}/lib/mdrivlib/target/stm32mp1_ca7/drivers/hal_handlers.cc
+  ${FWDIR}/lib/mdrivlib/target/stm32mp1_ca7/drivers/cycle_counter.cc
+  ${FWDIR}/lib/mdrivlib/drivers/qspi_flash_driver.cc
   ${QSPI_DRIVER}
   #
   ${CMAKE_BINARY_DIR}/checkgit/git_version.cpp
@@ -119,9 +102,9 @@ target_include_directories(
           ${FWDIR}/src/core_a7
           ${FWDIR}/src/board
           ${FWDIR}/lib/mdrivlib
-          ${FWDIR}/lib/mdrivlib/target/${MDRIVLIB_TARGET}
+          ${FWDIR}/lib/mdrivlib/target/stm32mp1
+          ${FWDIR}/lib/mdrivlib/target/stm32mp1_ca7
           ${LIBDIR}
-          # ${FWDIR}/lib/cmsis-device/stm32mp13x/include
           ${FWDIR}/lib/cmsis-device/stm32mp157c/include
           #
           ${CMAKE_BINARY_DIR}/checkgit
@@ -140,7 +123,7 @@ target_link_libraries(
 
 target_link_script(
   main
-  ${FWDIR}/system/linker/${LINK_SCRIPT}
+  ${FWDIR}/system/linker/stm32mp15xx_ca7.ld
   -L${FWDIR}
   -Wl,--gc-sections
   -Wno-psabi

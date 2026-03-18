@@ -1,8 +1,6 @@
 #include "controls.hh"
-#include "conf/i2c_shared_conf.hh"
 #include "console/pr_dbg.hh"
 #include "debug.hh"
-#include "util/zip.hh"
 
 namespace HelloVCA
 {

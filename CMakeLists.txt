@@ -6,26 +6,10 @@ set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/cmake/arm-none-eabi-gcc.cmake)
 
-set(CHIP "STM32MP13x" CACHE STRING "Target chip: STM32MP13x, STM32MP15x-SINGLECORE, STM32MP15x-DUALCORE")
-set_property(CACHE CHIP PROPERTY STRINGS "STM32MP13x" "STM32MP15x-SINGLECORE" "STM32MP15x-DUALCORE")
-
-if(CHIP STREQUAL "MP13x")
-  set(STM32MP13x ON)
-  set(SINGLE_CORE ON)
-elseif(CHIP STREQUAL "MP15x-SINGLECORE")
-  set(STM32MP15x ON)
-  set(SINGLE_CORE ON)
-elseif(CHIP STREQUAL "MP15x-DUALCORE")
-  set(STM32MP15x ON)
-  set(DUAL_CORE ON)
-else()
-  message(FATAL_ERROR "Invalid CHIP option: ${CHIP}. Must be MP13x, MP15x-SINGLECORE, or MP15x-DUALCORE")
-endif()
-
 project(
   MetaModule
   VERSION 0.10
-  DESCRIPTION "MetaModule"
+  DESCRIPTION "Hello VCA"
   LANGUAGES C CXX ASM
 )
 
@@ -105,16 +89,9 @@ else()
 	set(BOOTLOADER_TOOLCHAIN_OPT "TOOLCHAIN_DIR=${TOOLCHAIN_BASE_DIR}/")
 endif()
 
-if (STM32MP13x)
-    set(BL_SERIES stm32mp13x)
-    set(BL_CONF mp13x-devboard-v0.4.hh)
-else()
-    set(BL_SERIES stm32mp15x)
-endif()
-
 add_custom_target(
   bootloader
-  COMMAND make --no-print-directory SERIES=${BL_SERIES} BOARD_CONF=../board_conf/mp13x-devboard-v0.4.hh ${BOOTLOADER_TOOLCHAIN_OPT}
+  COMMAND make --no-print-directory SERIES=stm32mp15x BOARD_CONF=../board_conf/mp153-devboard-v0.2.hh ${BOOTLOADER_TOOLCHAIN_OPT}
   COMMENT "Building MP1-Boot (FSBL)"
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bootloader/mp1-boot
   VERBATIM
@@ -122,7 +99,7 @@ add_custom_target(
 
 add_custom_target(
   norflash-writer
-  COMMAND make --no-print-directory SERIES=${BL_SERIES} BOARD_CONF=../board_conf/lc_mp1boot_conf.hh  NORFLASH_WRITER=1 BINARYNAME=norwriter BUILDDIR=norwriter ${BOOTLOADER_TOOLCHAIN_OPT}
+  COMMAND make --no-print-directory SERIES=stm32mp15x BOARD_CONF=../board_conf/mp153-devboard-v0.2.hh  NORFLASH_WRITER=1 BINARYNAME=norwriter BUILDDIR=norwriter ${BOOTLOADER_TOOLCHAIN_OPT}
   COMMENT "Building MP1-Boot (NORFLASH_WRITER)"
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bootloader/mp1-boot
   VERBATIM
@@ -133,14 +110,6 @@ add_custom_command(
   DEPENDS bootloader
 )
 
-
-# add_custom_target(
-#   bootloader-dfu
-#   COMMAND make --no-print-directory BOARD_CONF=../../board_conf/dfu-mp153-devboard-v0.2.hh ${BOOTLOADER_TOOLCHAIN_OPT}
-#   COMMENT "Building DFU Bootloader"
-#   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bootloader/mp1-usb-dfu
-#   VERBATIM
-# )
 
 #
 # Tests
