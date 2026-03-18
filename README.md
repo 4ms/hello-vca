@@ -30,6 +30,8 @@ The `make` commands are shortcuts for using cmake to configure and build the pro
 
 ## Developer Docs
 
+- [Project Layout](docs/project-layout.md) — Overview of the source tree and where to find things
+
 1. [Setting Up Your Environment](docs/setup-environment.md)
    - [All Platforms](docs/setup-environment.md#all-platforms)
    - [macOS](docs/setup-environment.md#macos)
