@@ -7,19 +7,19 @@ Make sure you are on the right branch and you have already updated the submodule
 
 To prepare the build system (only needs to be run once):
 
-```
+```bash
 make configure
 ```
 
 To compile, run:
 
-```
+```bash
 make all
 ```
 
 The `make configure` command is a shortcut for running:
 
-```
+```bash
 # macOS, Linux:
 cmake --fresh --preset full -GNinja
 
@@ -29,20 +29,29 @@ cmake --fresh --preset full -G"Unix Makefiles"
 
 The `make all` command is a shortcut for running:
 
-```
+```bash
 cmake --build --preset full
 ```
 
 You can set a different `LOG_LEVEL` if you want to control
 how much gets sent to the console via UART. See [Debugging](firmware-debugging.md). The default is `DEBUG`.
 
-## Using an SD Card
+## Building using docker
+
+There is a Dockerfile you can use to build the binaries.
+```bash
+docker build -t hello-vca-fw .
+docker run --rm -it -v $(pwd):/workspace/hello-vca hello-vca-fw
+```
+
+## Building for booting from an SD card
 
 *Optional*: If you plan to flash firmware to an SD card, then you can specify the
 path to the SD card device to save time. If you don't do this, then the system
 will prompt you whenever you run one of the SD card flashing scripts. The
 device path should be to the entire SD card device (not just one partition).
-```
+
+```bash
 cmake --preset full -DSD_DISK_DEV=/dev/disk4
 
 # Alternatively, set an environment variable:
