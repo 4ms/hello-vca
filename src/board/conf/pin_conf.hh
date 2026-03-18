@@ -8,22 +8,19 @@
 namespace Board
 {
 
+using mdrivlib::AdcChannelConf;
 using mdrivlib::GPIO;
-using mdrivlib::PinAF;
 using mdrivlib::PinDef;
-using mdrivlib::PinMode;
 using mdrivlib::PinNum;
 
 ///////////////////////////////////////////////////////////
 // Define leds, buttons, switches, digital jacks, etc here:
 
-// Debug::Pin2, aka RX pin on header
+// Mode "LED" is Debug::Pin2, aka RX pin on header
 constexpr inline PinDef ModeLED = {Debug::Pin2::Gpio_v, (PinNum)Debug::Pin2::PinNum_v};
 
 constexpr inline PinDef GateInJack = DevBoard::B2;
 
-///// ADC pins:
-using mdrivlib::AdcChannelConf;
 constexpr auto AdcSampTime = mdrivlib::AdcSamplingTime::_2Cycles;
 
 constexpr auto Adc1Confs = std::to_array({
@@ -32,15 +29,13 @@ constexpr auto Adc1Confs = std::to_array({
 	// add more ADC channels that have an ADC1 pin here
 });
 
-constexpr auto Adc2Confs = std::to_array({
+constexpr std::array<AdcChannelConf, 0> Adc2Confs;
+// Replace the above with this if you use Adc2:
+// constexpr auto Adc2Confs = std::to_array({
+// 	// add more ADC channels that have an ADC2 pin here
+// });
 
-	//dummy placeholder: remove this if using ADC2:
-	AdcChannelConf{},
-
-	// add more ADC channels that have an ADC2 pin here
-
-});
-
+// This may vary on your board:
 constexpr int32_t MinPotValue = 72;
 constexpr float MaxPotValue = 4020.f;
 
