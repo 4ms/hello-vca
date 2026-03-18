@@ -2,8 +2,8 @@
 #include "audio/audio.hh"
 #include "controls/controls.hh"
 #include "debug.hh"
+#include "flash/flash_loader.hh"
 #include "flash/settings_flash.hh"
-#include "flash_loader/flash_loader.hh"
 #include "git_version.h"
 #include "memory/static_buffers.hh"
 #include "uart_log.hh"
@@ -22,6 +22,7 @@ int main() {
 	StaticBuffers::init();
 
 	HAL_Delay(50);
+
 	pr_info("Build: %s (%s)\n", GIT_HASH.data(), GIT_COMMIT_TIME.data());
 
 	FlashLoader flash_loader;
@@ -35,9 +36,10 @@ int main() {
 					  controls,
 					  settings.settings};
 
-	pr_info("A7 Core 1 initialized\n");
-
+	pr_info("Starting Controls\n");
 	controls.start();
+
+	pr_info("Starting Audio\n");
 	audio.start();
 
 	while (true) {

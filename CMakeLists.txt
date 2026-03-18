@@ -64,7 +64,7 @@ add_custom_command(
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/prod.uimg
   COMMAND flashing/bin_to_uimg.py
-          -v
+          # -v  #Uncomment this to have verbose output
           --a7 ${CMAKE_CURRENT_BINARY_DIR}/main.uimg
           --a7-lma 0x70080000
           --a7-entry 0xC0100040

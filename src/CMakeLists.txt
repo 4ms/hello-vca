@@ -51,7 +51,7 @@ add_executable(
   ${FWDIR}/src/audio/audio.cc
   ${FWDIR}/src/controls/controls.cc
   #
-  ${FWDIR}/src/flash_loader/flash_loader.cc  # required for read/write flash chip
+  ${FWDIR}/src/flash/flash_loader.cc
   #
   ${FWDIR}/lib/stm32-hal/stm32mp13/src/stm32mp13xx_hal.c
   ${FWDIR}/lib/stm32-hal/stm32mp13/src/stm32mp13xx_hal_adc.c

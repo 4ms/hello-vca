@@ -1,37 +1,52 @@
 #include "module.hh"
 #include "conf/analog_pins.hh"
 #include "math.hh"
+#include "util/zip.hh"
 #include <utility>
 
 namespace HelloVCA
 {
+
+//inputs are swapped on carrier board
+enum { RightIn = 0, LeftIn = 1 };
+enum { LeftOut = 0, RightOut = 1 };
 
 Module::Module() {
 	// ...
 }
 
 void Module::process(Board::StreamConf::Audio::CombinedAudioBlock &audio_block, ParamBlock &param_block) {
-
+	// Update the edge detector with the latest raw value:
 	gate_jack.update(param_block.metaparams.gate_in);
 
-	if (gate_jack.went_low()) {
-		// handle gate jack going low...
-		// for this simple example we just turn off expo mode
-		expo_mode = false;
+	// Trigger on the jack causes expo_mode to toggle:
+	if (gate_jack.went_high()) {
+		expo_mode = !expo_mode;
+		param_block.leds.mode_led = expo_mode;
 
-	} else if (gate_jack.went_high()) {
-		expo_mode = true;
+		// Start the 10 second countdown to save settings
+		settings_tickdown = 10 * Board::StreamConf::Audio::SampleRate / Board::StreamConf::Audio::MaxBlockSize;
 	}
 
-	for (auto idx = 0u; auto const &in : audio_block.in_codec) {
-		auto &out = audio_block.out_codec[idx];
-		auto &params = param_block.params[idx];
+	// Check if the timer expired
+	if (settings_tickdown > 0) {
+		if (--settings_tickdown == 0) {
+			settings_changed = true;
+		}
+	}
 
-		float left_input = in.scale_input_chan(0);
-		float right_input = in.scale_input_chan(1);
+	// Iterate the audio and params.
+	for (auto [in, out, params] : zip(audio_block.in_codec, audio_block.out_codec, param_block.params)) {
+		// The audio data comes in as a signed 24-bit value
+		// We convert to [0..1] float with scale_input_chan()
+		// The carrier board inverts the inputs, so we invert again here
+		float left_input = -in.scale_input_chan(LeftIn);
+		float right_input = -in.scale_input_chan(RightIn);
 
 		float offset = params.analog_ins[GainCV];
-		float gain = params.analog_ins[GainKnob] + offset;
+
+		// Knob is wired backwards on the carrier board, oops!
+		float gain = (1.f - params.analog_ins[GainKnob]) + offset;
 
 		if (expo_mode) {
 			gain = Expf(gain);
@@ -40,10 +55,10 @@ void Module::process(Board::StreamConf::Audio::CombinedAudioBlock &audio_block, 
 		float left_output = left_input * gain;
 		float right_output = right_input * gain;
 
-		out.set_scaled_output(0, left_output);
-		out.set_scaled_output(1, right_output);
-
-		idx++;
+		// The audio data needs to go out as a signed 24-bit value
+		// We convert from [0..1] float with set_scaled_output()
+		out.set_scaled_output(LeftOut, left_output);
+		out.set_scaled_output(RightOut, right_output);
 	}
 }
 

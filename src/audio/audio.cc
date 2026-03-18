@@ -38,14 +38,7 @@ AudioStream::AudioStream(AudioInBlock &audio_in_block,
 	codec_.set_rx_buffer(audio_blocks[0].in_codec, block_size_);
 
 	auto audio_callback = [this]<unsigned block>() {
-		Debug::Pin0::high();
-
-		// TODO for single-core applications:
-		// Make MetaParams struct have interp params for all pots/cv.
-		// Don't use Params.
-		// Use previous ADC readings to set targets on interp params
-		// Start ADC readings while we process an audio block (it's not circular/continuous -- just make sure it finished before blocksize is done)
-		// Module gets interp params (in param block), not floats per sample
+		// Debug::Pin0::high();
 
 		this->controls.start_param_block<block>();
 
@@ -61,7 +54,7 @@ AudioStream::AudioStream(AudioInBlock &audio_in_block,
 			}
 		}
 
-		Debug::Pin0::low();
+		// Debug::Pin0::low();
 	};
 
 	codec_.set_callbacks([audio_callback]() { audio_callback.operator()<0>(); },

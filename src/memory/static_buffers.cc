@@ -18,13 +18,11 @@ __attribute__((section(".noncachable"))) Board::StreamConf::Audio::AudioOutBlock
 alignas(16) __attribute__((section(".noncachable"))) std::array<uint16_t, Board::Adc1Confs.size()> adc1_vals{};
 alignas(16) __attribute__((section(".noncachable"))) std::array<uint16_t, Board::Adc2Confs.size()> adc2_vals{};
 
-#ifdef SINGLE_CORE
-// No need to be non-cacheable for single core
+// Params do not need to be non-cacheable for single core:
 DoubleBufParamBlock param_blocks{};
-#else
-// This is used by both M4 and A7 cores, so needs to be non-cacheable
-__attribute__((section(".noncachable"))) DoubleBufParamBlock param_blocks{};
-#endif
+
+// For dual-core, the params are used by both M4 and A7 cores, so needs to be non-cacheable:
+// __attribute__((section(".noncachable"))) DoubleBufParamBlock param_blocks{};
 
 void init() {
 	for (auto &block : param_blocks) {

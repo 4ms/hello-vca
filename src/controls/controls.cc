@@ -12,28 +12,28 @@ using namespace mdrivlib;
 void Controls::update_debouncers() {
 	// Read and debounce pins here (buttons, switches, etc)
 	// This is called every sample
+	gate_in_jack.update();
 }
 
 void Controls::update_params() {
 	// Populate the params and metaparams fields
 	// This is called every sample
-	// The `if (_first_param)` block runs once per block
 
 	// Interpolate knob readings across the param block, since we capture them at a slower rate than audio process
 	_adcs1_bank.add_new_readings([this](unsigned i) { return get_adc1_reading(i); });
 	_adcs1_bank.get_interp_values([this](unsigned i, float v) { cur_params->analog_ins[i] = std::clamp(v, 0.f, 1.f); });
 
+	// If you end up enabling ADC2, then uncomment this:
 	// _adcs2_bank.add_new_readings([this](unsigned i) { return get_adc2_reading(i); });
 	// _adcs2_bank.get_interp_values(
 	// 	[this](auto i, float v) { cur_params->analog_ins[i + NumAdcs1] = std::clamp(v, 0.f, 1.f); });
 
+	// This part runs at the start of every audio block
 	if (_first_param) {
 		_first_param = false;
 
 		// Set all block-rate metaparam:
 		cur_metaparams->gate_in = gate_in_jack.is_high();
-
-		// Set LEDs here
 
 		// Better would be to use PWM or an LED driver so we can show a float value:
 		level_led.set_to(cur_leds->level_led > 0.5f ? 1 : 0);
