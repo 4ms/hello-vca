@@ -10,7 +10,7 @@
 #include "params/param_block.hh"
 #include "params/params.hh"
 #include "util/filter.hh"
-#include "util/interp_param.hh"
+#include "util/filtered_interp_array.hh"
 #include <atomic>
 
 namespace HelloVCA
@@ -72,16 +72,8 @@ private:
 	mdrivlib::AdcDmaPeriph<Board::Adc1Conf> adc1_periph{StaticBuffers::adc1_vals, Board::Adc1Confs};
 	mdrivlib::AdcDmaPeriph<Board::Adc2Conf> adc2_periph{StaticBuffers::adc2_vals, Board::Adc2Confs};
 
-	std::array<HysteresisFilter<4, 4096>, NumAdcs1> adc1_filt;
-	std::array<HysteresisFilter<4, 4096>, NumAdcs2> adc2_filt;
-
-	std::array<InterpParamVariable<float>, NumAdcs1> _adcs1{};
-	std::array<InterpParamVariable<float>, NumAdcs2> _adcs2{};
-
-	std::atomic<bool> _new_adc1_data_ready = false;
-	std::atomic<bool> _new_adc2_data_ready = false;
-	unsigned num_adc1_updates = 0;
-	unsigned num_adc2_updates = 0;
+	FilteredInterpArray<NumAdcs1, HysteresisFilter<4, 4096>> _adcs1_bank;
+	FilteredInterpArray<NumAdcs2, HysteresisFilter<4, 4096>> _adcs2_bank;
 
 	// Task
 	mdrivlib::PinChangeInt<Board::FrameRatePinChangeConf> read_controls_task;
