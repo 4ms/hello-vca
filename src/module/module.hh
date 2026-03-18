@@ -32,7 +32,6 @@ private:
 	bool expo_mode{};
 
 	bool settings_changed = false;
-	uint32_t settings_tickdown = 0;
 };
 
 } // namespace HelloVCA

@@ -22,18 +22,12 @@ void Module::process(Board::StreamConf::Audio::CombinedAudioBlock &audio_block, 
 	// Trigger on the jack causes expo_mode to toggle:
 	if (gate_jack.went_high()) {
 		expo_mode = !expo_mode;
-		param_block.leds.mode_led = expo_mode;
 
-		// Start the 10 second countdown to save settings
-		settings_tickdown = 10 * Board::StreamConf::Audio::SampleRate / Board::StreamConf::Audio::MaxBlockSize;
+		// Raise the flag that we should save settings
+		settings_changed = true;
 	}
 
-	// Check if the timer expired
-	if (settings_tickdown > 0) {
-		if (--settings_tickdown == 0) {
-			settings_changed = true;
-		}
-	}
+	param_block.leds.mode_led = expo_mode;
 
 	// Iterate the audio and params.
 	for (auto [in, out, params] : zip(audio_block.in_codec, audio_block.out_codec, param_block.params)) {

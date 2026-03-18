@@ -27,7 +27,6 @@ private:
 	// Switches/Buttons/LEDs/gate jacks
 	DebouncedPin<Board::GateInJack, PinPolarity::Normal> gate_in_jack;
 
-	mdrivlib::Pin level_led{Board::LevelLED, PinMode::Output};
 	mdrivlib::Pin mode_led{Board::ModeLED, PinMode::Output};
 
 	// May need to tweak values this by hand:

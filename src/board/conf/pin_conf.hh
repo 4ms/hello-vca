@@ -1,5 +1,6 @@
 #pragma once
 #include "analog_pins.hh"
+#include "debug.hh"
 #include "devboard_mp153_v0.2.hh"
 #include "drivers/adc_builtin_conf.hh"
 #include "drivers/pin.hh"
@@ -16,8 +17,10 @@ using mdrivlib::PinNum;
 
 ///////////////////////////////////////////////////////////
 // Define leds, buttons, switches, digital jacks, etc here:
-constexpr inline PinDef LevelLED = DevBoard::A1;
-constexpr inline PinDef ModeLED = DevBoard::B4;
+
+// Debug::Pin2, aka RX pin on header
+constexpr inline PinDef ModeLED = {Debug::Pin2::Gpio_v, (PinNum)Debug::Pin2::PinNum_v};
+
 constexpr inline PinDef GateInJack = DevBoard::B2;
 
 ///// ADC pins:
